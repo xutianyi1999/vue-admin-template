@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
-Vue.use(Router)
-
 /* Layout */
 import Layout from '@/layout'
+
+Vue.use(Router);
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -54,7 +53,27 @@ export const constantRoutes = [
       meta: { title: 'Dashboard', icon: 'dashboard' }
     }]
   },
-
+  {
+    path: '/basic',
+    component: Layout,
+    redirect: '/basic/user',
+    name: '基本',
+    meta: {title: '基本', icon: 'example'},
+    children: [
+      {
+        path: 'user',
+        name: '用户',
+        component: () => import('@/views/basic/user'),
+        meta: {title: '用户', icon: 'table'}
+      },
+      {
+        path: 'role',
+        name: '角色',
+        component: () => import('@/views/tree/index'),
+        meta: {title: 'Tree', icon: 'tree'}
+      }
+    ]
+  },
   {
     path: '/example',
     component: Layout,
@@ -161,19 +180,19 @@ export const constantRoutes = [
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
-]
+];
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
-})
+});
 
-const router = createRouter()
+const router = createRouter();
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
-  const newRouter = createRouter()
+  const newRouter = createRouter();
   router.matcher = newRouter.matcher // reset router
 }
 
