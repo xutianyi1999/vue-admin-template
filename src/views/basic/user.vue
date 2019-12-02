@@ -48,18 +48,31 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="角色">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="temp.username" placeholder="请输入用户名" />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="temp.password" placeholder="请输入密码" show-password />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="temp.email" placeholder="请输入邮箱" />
+        </el-form-item>
+        <el-form-item label="角色" prop="roleId">
+          <el-select v-model="temp.roleId" class="filter-item" placeholder="请选择角色">
             <el-option v-for="role in roleList" :key="role.id" :label="role.name" :value="role.id" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-radio v-model="temp.status" label="1">未锁定</el-radio>
+          <el-radio v-model="temp.status" label="2">锁定</el-radio>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          Cancel
+          关闭
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          Confirm
+          保存
         </el-button>
       </div>
     </el-dialog>
@@ -112,12 +125,11 @@ export default {
       showReviewer: false,
       temp: {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
-        status: ''
+        username: undefined,
+        password: undefined,
+        email: undefined,
+        roleId: undefined,
+        status: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -128,9 +140,10 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        username: [{ required: true, message: '用户名不能为空', trigger: 'change' }],
+        password: [{ required: true, message: '密码不能为空', trigger: 'change' }],
+        email: [{ required: true, message: '邮箱不能为空', trigger: 'change' }],
+        roleId: [{ required: true, message: '请选择角色', trigger: 'change' }]
       },
       downloadLoading: false
     }
@@ -180,12 +193,11 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: '',
-        type: ''
+        username: undefined,
+        password: undefined,
+        email: undefined,
+        roleId: undefined,
+        status: '1'
       }
     },
     handleCreate() {
@@ -199,8 +211,6 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
           createArticle(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false

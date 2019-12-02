@@ -8,6 +8,14 @@ export function fetchList(query) {
   })
 }
 
+export function createArticle(data) {
+  return request({
+    url: 'http://127.0.0.1:8888/api/user/save',
+    method: 'post',
+    params: data
+  })
+}
+
 export function fetchRoleList() {
   return request({
     url: 'http://127.0.0.1:8888/api/role/list',
@@ -28,14 +36,6 @@ export function fetchPv(pv) {
     url: '/article/pv',
     method: 'get',
     params: { pv }
-  })
-}
-
-export function createArticle(data) {
-  return request({
-    url: '/article/create',
-    method: 'post',
-    data
   })
 }
 
