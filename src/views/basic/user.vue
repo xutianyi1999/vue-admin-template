@@ -14,6 +14,9 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
       </el-button>
+      <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="el-icon-delete" @click="handleDelete">
+        删除
+      </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         Export
       </el-button>
@@ -31,12 +34,14 @@
       highlight-current-row
       style="width: 100%;"
       @sort-change="sortChange"
+      @selection-change="selectChange"
     >
-      <el-table-column label="ID" prop="userInfo.id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')" />
+      <el-table-column type="selection" align="center" width="55" />
+      <el-table-column type="index" width="50" align="center" label="序号" />
       <el-table-column prop="userInfo.username" label="用户名" />
       <el-table-column prop="userInfo.email" label="邮箱" />
       <el-table-column prop="roleInfo.name" width="120px" label="角色" />
-      <el-table-column label="Date" width="200px" align="center">
+      <el-table-column width="200px" align="center" label="创建时间">
         <template slot-scope="scope">
           <span>{{ scope.row.userInfo.createTime | dateFormat('yyyy-MM-dd hh:mm:ss') }}</span>
         </template>
@@ -90,7 +95,7 @@
 </template>
 
 <script>
-import { createArticle, fetchList, fetchRoleList, fetchPv, updateArticle } from '@/api/article'
+import { createArticle, fetchList, fetchRoleList, fetchPv, updateArticle, userDelete } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -145,7 +150,8 @@ export default {
         email: [{ required: true, message: '邮箱不能为空', trigger: 'change' }],
         roleId: [{ required: true, message: '请选择角色', trigger: 'change' }]
       },
-      downloadLoading: false
+      downloadLoading: false,
+      selectRows: []
     }
   },
   created() {
@@ -153,6 +159,9 @@ export default {
     this.getList()
   },
   methods: {
+    selectChange(val) {
+      this.selectRows = val
+    },
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
@@ -211,8 +220,8 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp)
+          createArticle(this.temp).then(response => {
+            this.getList()
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -257,15 +266,15 @@ export default {
         }
       })
     },
-    handleDelete(row) {
-      this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
-        type: 'success',
-        duration: 2000
+    handleDelete() {
+      const idList = []
+      this.selectRows.forEach(row => {
+        idList.push(row.userInfo.id)
       })
-      const index = this.list.indexOf(row)
-      this.list.splice(index, 1)
+
+      userDelete(JSON.stringify(idList)).then(() => {
+        this.getList()
+      })
     },
     handleFetchPv(pv) {
       fetchPv(pv).then(response => {

@@ -1,8 +1,10 @@
 import request from '@/utils/request'
 
+const parentUrl = 'http://127.0.0.1:8888/api'
+
 export function fetchList(query) {
   return request({
-    url: 'http://127.0.0.1:8888/api/user/list',
+    url: parentUrl + '/user/list',
     method: 'get',
     params: query
   })
@@ -10,7 +12,7 @@ export function fetchList(query) {
 
 export function createArticle(data) {
   return request({
-    url: 'http://127.0.0.1:8888/api/user/save',
+    url: parentUrl + '/user/save',
     method: 'post',
     params: data
   })
@@ -18,8 +20,16 @@ export function createArticle(data) {
 
 export function fetchRoleList() {
   return request({
-    url: 'http://127.0.0.1:8888/api/role/list',
+    url: parentUrl + '/role/list',
     method: 'get'
+  })
+}
+
+export function userDelete(idList) {
+  return request({
+    url: parentUrl + '/user/delete',
+    method: 'post',
+    params: { idList }
   })
 }
 
