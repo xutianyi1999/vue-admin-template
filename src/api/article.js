@@ -33,6 +33,14 @@ export function userDelete(idList) {
   })
 }
 
+export function userEdit(data) {
+  return request({
+    url: parentUrl + '/user/edit',
+    method: 'post',
+    params: data
+  })
+}
+
 export function fetchArticle(id) {
   return request({
     url: '/article/detail',
@@ -46,13 +54,5 @@ export function fetchPv(pv) {
     url: '/article/pv',
     method: 'get',
     params: { pv }
-  })
-}
-
-export function updateArticle(data) {
-  return request({
-    url: '/article/update',
-    method: 'post',
-    data
   })
 }
