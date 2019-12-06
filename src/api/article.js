@@ -41,6 +41,22 @@ export function userEdit(data) {
   })
 }
 
+export function checkUsernameExist(username) {
+  return request({
+    url: parentUrl + '/user/isUsernameExist',
+    method: 'get',
+    params: { username }
+  })
+}
+
+export function checkEmailExist(email) {
+  return request({
+    url: parentUrl + '/user/isEmailExist',
+    method: 'get',
+    params: { email }
+  })
+}
+
 export function fetchArticle(id) {
   return request({
     url: '/article/detail',

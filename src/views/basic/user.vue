@@ -96,7 +96,16 @@
 </template>
 
 <script>
-import { createArticle, fetchList, fetchRoleList, fetchPv, userEdit, userDelete } from '@/api/article'
+import {
+  createArticle,
+  fetchList,
+  fetchRoleList,
+  fetchPv,
+  userEdit,
+  userDelete,
+  checkUsernameExist,
+  checkEmailExist
+} from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination'
@@ -146,9 +155,15 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        username: [{ required: true, message: '用户名不能为空', trigger: 'change' }],
+        username: [
+          { required: true, message: '用户名不能为空', trigger: 'change' },
+          { validator: this.checkUsernameExist, trigger: 'blur' }
+        ],
         password: [{ required: true, message: '密码不能为空', trigger: 'change' }],
-        email: [{ required: true, message: '邮箱不能为空', trigger: 'change' }],
+        email: [
+          { required: true, message: '邮箱不能为空', trigger: 'change' },
+          { validator: this.checkEmailExist, trigger: 'blur' }
+        ],
         roleId: [{ required: true, message: '请选择角色', trigger: 'change' }]
       },
       downloadLoading: false,
@@ -160,6 +175,32 @@ export default {
     this.getList()
   },
   methods: {
+    checkUsernameExist(rule, value, callback) {
+      if (value !== undefined && value.length !== 0) {
+        checkUsernameExist(value).then(response => {
+          if (!response.data) {
+            callback()
+          } else {
+            callback(new Error('用户名已重复'))
+          }
+        })
+      } else {
+        callback()
+      }
+    },
+    checkEmailExist(rule, value, callback) {
+      if (value !== undefined && value.length !== 0) {
+        checkEmailExist(value).then(response => {
+          if (!response.data) {
+            callback()
+          } else {
+            callback(new Error('邮箱已重复'))
+          }
+        })
+      } else {
+        callback()
+      }
+    },
     selectChange(val) {
       this.selectRows = val
     },
